@@ -1,0 +1,158 @@
+{
+  "dataset_name": "StudentPerformanceFactors.csv",
+  "rows_count": 6607,
+  "initial_columns_count": 20,
+  "processed_columns_count": 31,
+  "missing_values_initial": {
+    "Teacher_Quality": 78,
+    "Parental_Education_Level": 90,
+    "Distance_from_Home": 67
+  },
+  "imputation": {
+    "Teacher_Quality": {
+      "missing_before": 78,
+      "fill_value": "Medium"
+    },
+    "Parental_Education_Level": {
+      "missing_before": 90,
+      "fill_value": "High School"
+    },
+    "Distance_from_Home": {
+      "missing_before": 67,
+      "fill_value": "Near"
+    }
+  },
+  "outlier_statistics": {
+    "Hours_Studied": {
+      "Q1": 16.0,
+      "Q3": 24.0,
+      "IQR": 8.0,
+      "lower_bound": 4.0,
+      "upper_bound": 36.0,
+      "outliers_count": 43,
+      "min": 1.0,
+      "max": 44.0
+    },
+    "Attendance": {
+      "Q1": 70.0,
+      "Q3": 90.0,
+      "IQR": 20.0,
+      "lower_bound": 40.0,
+      "upper_bound": 120.0,
+      "outliers_count": 0,
+      "min": 60.0,
+      "max": 100.0
+    },
+    "Sleep_Hours": {
+      "Q1": 6.0,
+      "Q3": 8.0,
+      "IQR": 2.0,
+      "lower_bound": 3.0,
+      "upper_bound": 11.0,
+      "outliers_count": 0,
+      "min": 4.0,
+      "max": 10.0
+    },
+    "Previous_Scores": {
+      "Q1": 63.0,
+      "Q3": 88.0,
+      "IQR": 25.0,
+      "lower_bound": 25.5,
+      "upper_bound": 125.5,
+      "outliers_count": 0,
+      "min": 50.0,
+      "max": 100.0
+    },
+    "Tutoring_Sessions": {
+      "Q1": 1.0,
+      "Q3": 2.0,
+      "IQR": 1.0,
+      "lower_bound": -0.5,
+      "upper_bound": 3.5,
+      "outliers_count": 430,
+      "min": 0.0,
+      "max": 8.0
+    },
+    "Physical_Activity": {
+      "Q1": 2.0,
+      "Q3": 4.0,
+      "IQR": 2.0,
+      "lower_bound": -1.0,
+      "upper_bound": 7.0,
+      "outliers_count": 0,
+      "min": 0.0,
+      "max": 6.0
+    },
+    "Exam_Score": {
+      "Q1": 65.0,
+      "Q3": 69.0,
+      "IQR": 4.0,
+      "lower_bound": 59.0,
+      "upper_bound": 75.0,
+      "outliers_count": 104,
+      "min": 55.0,
+      "max": 101.0
+    }
+  },
+  "new_features": [
+    {
+      "name": "Study_to_Sleep_Ratio",
+      "formula": "Hours_Studied / Sleep_Hours",
+      "description": "Отношение учебных часов к часам сна (баланс работы и отдыха)",
+      "mean": 2.9800567579839563,
+      "min": 0.4,
+      "max": 9.0
+    },
+    {
+      "name": "Academic_Effort_Index",
+      "formula": "(Hours_Studied + 1.5 * Tutoring_Sessions) * (Attendance / 100)",
+      "description": "Интегральный индекс академических усилий с учетом посещаемости",
+      "mean": 17.69190404116846,
+      "min": 2.4,
+      "max": 38.22
+    },
+    {
+      "name": "Score_Growth",
+      "formula": "Exam_Score - Previous_Scores",
+      "description": "Прирост / дельта академической успеваемости относительно прошлых тестов",
+      "mean": -7.943393370667474,
+      "min": -39.0,
+      "max": 23.0
+    }
+  ],
+  "binary_encoded_columns": [
+    "Gender",
+    "Extracurricular_Activities",
+    "Internet_Access",
+    "Learning_Disabilities",
+    "School_Type"
+  ],
+  "ohe_columns": [
+    "Parental_Involvement",
+    "Access_to_Resources",
+    "Motivation_Level",
+    "Family_Income",
+    "Teacher_Quality",
+    "Peer_Influence",
+    "Parental_Education_Level",
+    "Distance_from_Home"
+  ],
+  "scaling_summary": {
+    "features_scaled": [
+      "Hours_Studied",
+      "Attendance",
+      "Sleep_Hours",
+      "Previous_Scores",
+      "Tutoring_Sessions",
+      "Physical_Activity",
+      "Exam_Score",
+      "Study_to_Sleep_Ratio",
+      "Academic_Effort_Index",
+      "Score_Growth"
+    ],
+    "standard_scaler_mean_approx": -2.503084936403259e-16,
+    "standard_scaler_std_approx": 1.0,
+    "minmax_scaler_min": 0.0,
+    "minmax_scaler_max": 1.0
+  }
+}
