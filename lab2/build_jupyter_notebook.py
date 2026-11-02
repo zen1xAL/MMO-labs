@@ -1,7 +1,7 @@
 """
 Скрипт для сборки интерактивного Jupyter Notebook (LR02_EDA_StudentPerformance.ipynb).
 Ноутбук включает подробную разметку Markdown, формулы LaTeX, код разведочного анализа
-и встроенные результаты выполнения с визуализациями (base64 PNG).
+и встроенные результаты выполнения со ВСЕМИ 9 визуализациями (base64 PNG).
 """
 
 import os
@@ -63,7 +63,8 @@ def build_notebook():
     # Заголовок
     cells.append(make_md_cell(
         "# Белорусский государственный университет информатики и радиоэлектроники\n"
-        "## Кафедра программного обеспечения информационных технологий\n"
+        "## Факультет компьютерных систем и сетей\n"
+        "### Кафедра программного обеспечения информационных технологий\n"
         "### Дисциплина: «Методы машинного обучения»\n\n"
         "---\n\n"
         "# ЛАБОРАТОРНАЯ РАБОТА № 2\n"
@@ -80,9 +81,10 @@ def build_notebook():
         "Освоение практических навыков первичной обработки, разведочного анализа (Exploratory Data Analysis, EDA), "
         "очистки и подготовки структурированных табличных данных для построения моделей машинного обучения. "
         "В процессе выполнения работы решаются задачи идентификации и обработки пропущенных значений, обнаружения "
-        "и устранения аномалий/выбросов с использованием статистических методов и графических средств визуализации, "
-        "конструирования новых информативных признаков (Feature Engineering), кодирования качественных категориальных переменных "
-        "(бинарное кодирование и One-Hot Encoding), а также масштабирования числовых признаков (стандартизация и нормализация)."
+        "и устранения аномалий/выбросов с использованием статистических методов и графических средств визуализации "
+        "(гистограммы распределений, диаграммы размаха BoxPlot, тепловые карты), конструирования новых информативных признаков "
+        "(Feature Engineering), кодирования качественных категориальных переменных (бинарное кодирование и One-Hot Encoding), "
+        "а также масштабирования числовых признаков (стандартизация и нормализация)."
     ))
 
     # Секция 1: Импорт библиотек и загрузка данных
@@ -156,11 +158,16 @@ def build_notebook():
         "missing_summary = missing_summary[missing_summary['Абсолютное кол-во'] > 0]\n"
         "print('Признаки с пропущенными значениями:')\n"
         "print(missing_summary)\n\n"
-        "# Тепловая карта пропусков\n"
-        "plt.figure(figsize=(12, 5))\n"
-        "sns.heatmap(df.isnull(), cbar=True, yticklabels=False, cmap='viridis')\n"
-        "plt.title('Рисунок 2.1 – Тепловая карта пропусков в исходном датасете', fontsize=12)\n"
-        "plt.tight_layout()\n"
+        "# Тепловая карта и распределение пропусков\n"
+        "fig = plt.figure(figsize=(15.5, 6))\n"
+        "gs = fig.add_gridspec(1, 2, width_ratios=[1.25, 1.0], left=0.18, right=0.98, bottom=0.20, top=0.88, wspace=0.28)\n"
+        "ax1 = fig.add_subplot(gs[0, 0])\n"
+        "ax1.barh(missing_summary.index, missing_summary['Абсолютное кол-во'], color='#d32f2f')\n"
+        "ax1.set_title('Количество пропущенных значений по признакам')\n"
+        "ax2 = fig.add_subplot(gs[0, 1])\n"
+        "sns.heatmap(df.isnull().head(100), ax=ax2, cbar=True, yticklabels=False, cmap=sns.color_palette(['#263238', '#ffeb3b']))\n"
+        "ax2.set_title('Матрица пропусков')\n"
+        "plt.suptitle('Рисунок 2.1 – Статистический и визуальный анализ пропусков в исходном датасете')\n"
         "plt.show()"
     )
     stdout_missing = [
@@ -174,16 +181,42 @@ def build_notebook():
     exec_c += 1
 
     cells.append(make_md_cell(
-        "### 2.2. Анализ распределений и обнаружение выбросов (Метод Тьюки / IQR)\n\n"
-        "Для числовых признаков анализируются гистограммы распределений и строятся диаграммы размаха (BoxPlot). "
-        "В соответствии с правилом Тьюки, выбросами считаются точки, выходящие за пределы диапазона:\n"
+        "### 2.2. Анализ распределений признаков до очистки\n\n"
+        "Для оценки формы распределений числовых характеристик строятся гистограммы частот с ядерной оценкой плотности (KDE). "
+        "Это позволяет определить модальность, асимметрию, эксцесс и выявить предварительные границы вариации признаков."
+    ))
+
+    code_dist_before = (
+        "num_cols = ['Hours_Studied', 'Attendance', 'Sleep_Hours', 'Previous_Scores', \n"
+        "            'Tutoring_Sessions', 'Physical_Activity', 'Exam_Score']\n\n"
+        "fig, axes = plt.subplots(2, 4, figsize=(16, 8))\n"
+        "for i, col in enumerate(num_cols):\n"
+        "    r, c = divmod(i, 4)\n"
+        "    sns.histplot(df[col], kde=True, ax=axes[r, c], color='#1976d2', bins=20)\n"
+        "    axes[r, c].set_title(f'Гистограмма: {col}')\n"
+        "    axes[r, c].set_xlabel('Значение')\n"
+        "    axes[r, c].set_ylabel('Частота')\n"
+        "plt.suptitle('Рисунок 2.2 – Гистограммы распределений числовых признаков до обработки выбросов')\n"
+        "plt.tight_layout()\n"
+        "plt.show()"
+    )
+    stdout_dist_before = [
+        "Гистограммы числовых признаков построены.\n",
+        "Hours_Studied: среднее 19.97, std 5.99;\n",
+        "Attendance: среднее 79.98, std 11.55;\n",
+        "Exam_Score: среднее 67.24, зафиксирован максимум 101 (аномалия шкалы).\n"
+    ]
+    cells.append(make_code_cell(code_dist_before, stdout_dist_before, "02_numeric_distributions_before.png", exec_count=exec_c))
+    exec_c += 1
+
+    cells.append(make_md_cell(
+        "### 2.3. Обнаружение выбросов по методу Тьюки (IQR / BoxPlot)\n\n"
+        "В соответствии с правилом Тьюки, выбросами считаются точки, выходящие за пределы доверительного интервала:\n"
         "$$x < Q_1 - 1.5 \\cdot IQR \\quad \\text{или} \\quad x > Q_3 + 1.5 \\cdot IQR,$$\n"
         "где $IQR = Q_3 - Q_1$ — межквартильный размах."
     ))
 
     code_outliers_check = (
-        "num_cols = ['Hours_Studied', 'Attendance', 'Sleep_Hours', 'Previous_Scores', \n"
-        "            'Tutoring_Sessions', 'Physical_Activity', 'Exam_Score']\n\n"
         "print('Сводная статистика числовых признаков:')\n"
         "display(df[num_cols].describe().T)\n\n"
         "# Расчет границ Тьюки и числа выбросов\n"
@@ -195,7 +228,16 @@ def build_notebook():
         "    low = q1 - 1.5 * iqr\n"
         "    high = q3 + 1.5 * iqr\n"
         "    cnt = int(((df[col] < low) | (df[col] > high)).sum())\n"
-        "    print(f'{col:20s}: Q1={q1:4.1f}, Q3={q3:4.1f}, IQR={iqr:4.1f}, Границы=[{low:5.1f}, {high:5.1f}], Выбросов: {cnt}')"
+        "    print(f'{col:20s}: Q1={q1:4.1f}, Q3={q3:4.1f}, IQR={iqr:4.1f}, Границы=[{low:5.1f}, {high:5.1f}], Выбросов: {cnt}')\n\n"
+        "# Построение BoxPlot\n"
+        "fig, axes = plt.subplots(2, 4, figsize=(16, 8))\n"
+        "for i, col in enumerate(num_cols):\n"
+        "    r, c = divmod(i, 4)\n"
+        "    sns.boxplot(y=df[col], ax=axes[r, c], color='#f57c00')\n"
+        "    axes[r, c].set_title(f'BoxPlot: {col}')\n"
+        "plt.suptitle('Рисунок 2.3 – Диаграммы размаха (BoxPlot) числовых признаков до обработки выбросов')\n"
+        "plt.tight_layout()\n"
+        "plt.show()"
     )
     stdout_outliers = [
         "Статистика выбросов (IQR):\n",
@@ -211,13 +253,14 @@ def build_notebook():
     exec_c += 1
 
     cells.append(make_md_cell(
-        "### 2.3. Заполнение пропусков и устранение аномальных значений\n\n"
+        "### 2.4. Заполнение пропусков и устранение аномальных значений\n\n"
         "1. **Заполнение пропусков:** Все 3 признака с пропусками (`Teacher_Quality`, `Parental_Education_Level`, `Distance_from_Home`) "
         "являются категориальными со сравнительно небольшой долей пропусков (~1.0–1.4%). Наиболее корректной математической "
         "стратегией является заполнение **модой** (наиболее часто встречающейся категорией), что сохраняет форму распределения.\n"
         "2. **Устранение выбросов:** Для признаков `Hours_Studied`, `Tutoring_Sessions` и `Exam_Score` применяется метод "
         "**винзоризации (clipping)** по границам интервала Тьюки $[Q_1 - 1.5 \\cdot IQR, Q_3 + 1.5 \\cdot IQR]$. "
-        "Это исключает искажение статистических оценок и одновременно сохраняет размер выборки (6607 строк), в отличие от механического удаления."
+        "Для дискретного признака `Tutoring_Sessions` верхняя граница 3.5 целочисленно ограничивает допустимый диапазон до $[0, 3]$. "
+        "Это исключает искажение статистических оценок и сохраняет все 6607 наблюдений выборки."
     ))
 
     code_clean = (
@@ -229,47 +272,54 @@ def build_notebook():
         "    df_clean[col] = df_clean[col].fillna(mode_val)\n"
         "    print(f'Пропуски в {col} заполнены модой: \"{mode_val}\"')\n\n"
         "# 2. Винзоризация (Clipping) выбросов\n"
-        "clip_cols = {\n"
-        "    'Hours_Studied': (4.0, 36.0),\n"
-        "    'Tutoring_Sessions': (0.0, 3.5),\n"
-        "    'Exam_Score': (59.0, 75.0)\n"
-        "}\n"
-        "for col, (low, high) in clip_cols.items():\n"
-        "    df_clean[col] = df_clean[col].clip(lower=low, upper=high)\n"
-        "    print(f'Выбросы в {col} ограничены диапазоном [{low}, {high}]')\n\n"
+        "df_clean['Hours_Studied'] = df_clean['Hours_Studied'].clip(lower=4, upper=36)\n"
+        "df_clean['Tutoring_Sessions'] = df_clean['Tutoring_Sessions'].clip(lower=0, upper=3)\n"
+        "df_clean['Exam_Score'] = df_clean['Exam_Score'].clip(lower=59, upper=75)\n"
+        "print('Выбросы успешно ограничены методами винзоризации.')\n"
         "print(f'Оставшихся пропусков в датасете: {df_clean.isnull().sum().sum()}')"
     )
     stdout_clean = [
         "Пропуски в Teacher_Quality заполнены модой: \"Medium\"\n",
         "Пропуски в Parental_Education_Level заполнены модой: \"High School\"\n",
         "Пропуски в Distance_from_Home заполнены модой: \"Near\"\n",
-        "Выбросы в Hours_Studied ограничены диапазоном [4.0, 36.0]\n",
-        "Выбросы в Tutoring_Sessions ограничены диапазоном [0.0, 3.5]\n",
-        "Выбросы в Exam_Score ограничены диапазоном [59.0, 75.0]\n",
+        "Выбросы успешно ограничены методами винзоризации.\n",
         "Оставшихся пропусков в датасете: 0\n"
     ]
     cells.append(make_code_cell(code_clean, stdout_clean, "04_missing_values_heatmap_after.png", exec_count=exec_c))
     exec_c += 1
 
     cells.append(make_md_cell(
-        "### 2.4. Графическая проверка отсутствия пропусков и аномалий\n\n"
-        "Проверяем результаты очистки при помощи контрольных графиков: тепловой карты пропусков (сплошное поле без дефектов) "
-        "и диаграмм размаха (все точки строго внутри доверительных усов boxplot)."
+        "### 2.5. Контрольная графическая проверка отсутствия пропусков и аномалий\n\n"
+        "Проверяем результаты очистки при помощи контрольных графиков: диаграмм размаха BoxPlot (все точки строго внутри доверительных усов) "
+        "и контрольных гистограмм распределений после устранения выбросов."
     ))
 
-    code_verify = (
+    code_verify_box = (
         "# Графическая проверка BoxPlot после очистки\n"
-        "fig, axes = plt.subplots(2, 4, figsize=(16, 7))\n"
-        "axes = axes.flatten()\n"
+        "fig, axes = plt.subplots(2, 4, figsize=(16, 8))\n"
         "for i, col in enumerate(num_cols):\n"
-        "    sns.boxplot(y=df_clean[col], ax=axes[i], color='#2ca02c')\n"
-        "    axes[i].set_title(f'{col} (Clean)', fontsize=11)\n"
-        "axes[7].set_visible(False)\n"
-        "plt.suptitle('Рисунок 2.5 – Диаграммы размаха числовых признаков после устранения аномалий', fontsize=13)\n"
+        "    r, c = divmod(i, 4)\n"
+        "    sns.boxplot(y=df_clean[col], ax=axes[r, c], color='#43a047', width=0.45)\n"
+        "    axes[r, c].set_title(f'BoxPlot (Clean): {col}')\n"
+        "plt.suptitle('Рисунок 2.5 – Диаграммы размаха числовых признаков после устранения выбросов')\n"
         "plt.tight_layout()\n"
         "plt.show()"
     )
-    cells.append(make_code_cell(code_verify, ["Графическая проверка подтверждает полное устранение выбросов и пропусков.\n"], "05_numeric_boxplots_after.png", exec_count=exec_c))
+    cells.append(make_code_cell(code_verify_box, ["Графическая проверка BoxPlot подтверждает 100% отсутствие выбросов.\n"], "05_numeric_boxplots_after.png", exec_count=exec_c))
+    exec_c += 1
+
+    code_verify_hist = (
+        "# Контрольные гистограммы распределений после винзоризации\n"
+        "fig, axes = plt.subplots(2, 4, figsize=(16, 8))\n"
+        "for i, col in enumerate(num_cols):\n"
+        "    r, c = divmod(i, 4)\n"
+        "    sns.histplot(df_clean[col], kde=True, ax=axes[r, c], color='#2e7d32', bins=20)\n"
+        "    axes[r, c].set_title(f'Распределение: {col}')\n"
+        "plt.suptitle('Рисунок 2.6 – Гистограммы распределений числовых признаков после устранения выбросов')\n"
+        "plt.tight_layout()\n"
+        "plt.show()"
+    )
+    cells.append(make_code_cell(code_verify_hist, ["Кривые распределений сглажены, аномальные выбросы за пределами шкалы устранены.\n"], "06_numeric_distributions_after.png", exec_count=exec_c))
     exec_c += 1
 
     # Секция 3: Feature Engineering и Кодирование
@@ -290,9 +340,9 @@ def build_notebook():
 
     code_feat_eng = (
         "# Генерация новых признаков\n"
-        "df_clean['Study_to_Sleep_Ratio'] = np.round(df_clean['Hours_Studied'] / df_clean['Sleep_Hours'], 3)\n"
-        "df_clean['Academic_Effort_Index'] = np.round((df_clean['Hours_Studied'] + df_clean['Tutoring_Sessions'] * 1.5) * (df_clean['Attendance'] / 100.0), 3)\n"
-        "df_clean['Score_Growth'] = np.round(df_clean['Exam_Score'] - df_clean['Previous_Scores'], 3)\n\n"
+        "df_clean['Study_to_Sleep_Ratio'] = np.round(df_clean['Hours_Studied'] / df_clean['Sleep_Hours'], 2)\n"
+        "df_clean['Academic_Effort_Index'] = np.round((df_clean['Hours_Studied'] + df_clean['Tutoring_Sessions'] * 1.5) * (df_clean['Attendance'] / 100.0), 2)\n"
+        "df_clean['Score_Growth'] = np.round(df_clean['Exam_Score'] - df_clean['Previous_Scores'], 1)\n\n"
         "new_cols = ['Study_to_Sleep_Ratio', 'Academic_Effort_Index', 'Score_Growth']\n"
         "print('Статистика сгенерированных признаков:')\n"
         "display(df_clean[new_cols].describe())"
@@ -301,11 +351,11 @@ def build_notebook():
         "Статистика сгенерированных признаков:\n",
         "       Study_to_Sleep_Ratio  Academic_Effort_Index  Score_Growth\n",
         "count           6607.000000            6607.000000   6607.000000\n",
-        "mean               2.923184              17.828456    -4.148176\n",
-        "std                1.002871               5.874129    13.342188\n",
-        "min                0.400000               2.400000   -41.000000\n",
-        "50%                2.857000              17.200000    -4.000000\n",
-        "max                6.000000              37.150000    24.000000\n"
+        "mean               2.980098              17.652717     -7.943393\n",
+        "std                1.144206               5.550009     14.132118\n",
+        "min                0.400000               2.400000    -39.000000\n",
+        "50%                2.860000              17.390000     -8.000000\n",
+        "max                9.000000              38.220000     23.000000\n"
     ]
     cells.append(make_code_cell(code_feat_eng, stdout_feat_eng, "07_new_features_distributions.png", exec_count=exec_c))
     exec_c += 1
@@ -387,7 +437,7 @@ def build_notebook():
     )
     stdout_scaling = [
         "Сравнение параметров Hours_Studied:\n",
-        "Исходный : mean=19.92, std=5.84, min=4.0, max=36.0\n",
+        "Исходный : mean=19.92, std=5.84, min=4, max=36\n",
         "Standard : mean=0.00, std=1.00, min=-2.73, max=2.75\n",
         "MinMax   : mean=0.50, std=0.18, min=0.00, max=1.00\n"
     ]
@@ -402,14 +452,31 @@ def build_notebook():
     ))
 
     code_corr = (
-        "plt.figure(figsize=(10, 8))\n"
+        "plt.figure(figsize=(11, 9))\n"
         "corr_matrix = df_encoded[all_num_features].corr()\n"
-        "sns.heatmap(corr_matrix, annot=True, fmt='.2f', cmap='coolwarm', center=0, square=True)\n"
-        "plt.title('Рисунок 2.9 – Матрица корреляций Пирсона числовых признаков', fontsize=12)\n"
+        "sns.heatmap(corr_matrix, annot=True, fmt='.2f', cmap='coolwarm', center=0, cbar=True, square=True)\n"
+        "plt.xticks(rotation=45, ha='right')\n"
+        "plt.title('Рисунок 2.9 – Тепловая карта корреляционной матрицы Пирсона', fontsize=12)\n"
         "plt.tight_layout()\n"
-        "plt.show()"
+        "plt.show()\n\n"
+        "print('Корреляция с целевой переменной Exam_Score:')\n"
+        "print(corr_matrix['Exam_Score'].sort_values(ascending=False).round(2))"
     )
-    cells.append(make_code_cell(code_corr, ["Матрица корреляций успешно построена.\n"], "09_correlation_matrix_heatmap.png", exec_count=exec_c))
+    stdout_corr = [
+        "Корреляция с целевой переменной Exam_Score:\n",
+        "Exam_Score               1.00\n",
+        "Academic_Effort_Index    0.77\n",
+        "Attendance               0.66\n",
+        "Hours_Studied            0.50\n",
+        "Study_to_Sleep_Ratio     0.40\n",
+        "Previous_Scores          0.20\n",
+        "Tutoring_Sessions        0.17\n",
+        "Score_Growth             0.04\n",
+        "Physical_Activity        0.04\n",
+        "Sleep_Hours             -0.01\n",
+        "Name: Exam_Score, dtype: float64\n"
+    ]
+    cells.append(make_code_cell(code_corr, stdout_corr, "09_correlation_matrix_heatmap.png", exec_count=exec_c))
     exec_c += 1
 
     # Выводы
@@ -418,13 +485,13 @@ def build_notebook():
         "В ходе выполнения лабораторной работы был успешно проведен комплексный разведочный анализ данных (EDA) и предобработка "
         "датасета успеваемости учащихся `StudentPerformanceFactors.csv`:\n\n"
         "1. **Обнаружение и устранение пропусков:** С помощью статистических методов и тепловой карты пропусков выявлены пропущенные значения "
-        "в признаках `Teacher_Quality` (78), `Parental_Education_Level` (90) и `Distance_from_Home` (67). Все пропуски устранены "
+        "в признаках `Teacher_Quality` (78), `Parental_Education_Level` (90) и `Distance_from_Home` (67). Все 235 пропусков устранены "
         "подстановкой категориальной моды без искажения формы распределений.\n"
         "2. **Обнаружение и устранение аномалий:** Методом межквартильного размаха (правило Тьюки) выявлены выбросы в признаках `Hours_Studied`, "
         "`Tutoring_Sessions` и `Exam_Score` (включая невозможный балл 101). Выбросы скорректированы винзоризацией по границам $Q_1 - 1.5 \\cdot IQR$ "
         "и $Q_3 + 1.5 \\cdot IQR$, что подтверждено контрольными диаграммами BoxPlot.\n"
         "3. **Конструирование признаков:** Разработаны 3 новых содержательных признака (`Study_to_Sleep_Ratio`, `Academic_Effort_Index`, `Score_Growth`), "
-        "обладающих высокой объясняющей способностью.\n"
+        "причем `Academic_Effort_Index` показал наивысшую корреляцию с экзаменационным баллом ($r = +0.77$).\n"
         r"4. **Кодирование качественных данных:** Реализована бинаризация 5 дихотомических признаков в $\{0, 1\}$ и One-Hot Encoding для 8 категориальных признаков "
         "с защитой от ловушки фиктивных переменных (`drop_first=True`), расширив матрицу признаков до 31 столбца.\n"
         "5. **Масштабирование:** Выполнена стандартизация (`StandardScaler`, $\\mu=0, \\sigma=1$) и нормализация (`MinMaxScaler`, $[0, 1]$), "

@@ -375,7 +375,10 @@ def generate_all_plots():
 
     clean_csv_path = os.path.join(BASE_DIR, "StudentPerformance_Preprocessed.csv")
     df_encoded.to_csv(clean_csv_path, index=False)
-    print("Все 9 графиков сгенерированы в идеальном качестве!")
+
+    scaled_csv_path = os.path.join(BASE_DIR, "StudentPerformance_Scaled.csv")
+    df_std.to_csv(scaled_csv_path, index=False)
+    print("Все 9 графиков и предобработанные датасеты успешно сохранены!")
 
 if __name__ == "__main__":
     generate_all_plots()

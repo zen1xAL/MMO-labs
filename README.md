@@ -47,7 +47,7 @@ MMO-labs/
 * **Тема:** Разведочный и предиктивный анализ данных (EDA).
 * **Датасет:** *Student Performance Factors* (6 607 наблюдений, 20 атрибутов).
 * **Выполненные этапы:**
-  1. Статистический и визуальный анализ пропусков (310 в `Parental_Education_Level`, 104 в `Teacher_Quality`, 88 в `Distance_from_Home`), их устранение модальной импутацией с валидацией.
+  1. Статистический и визуальный анализ пропусков (90 в `Parental_Education_Level`, 78 в `Teacher_Quality`, 67 в `Distance_from_Home`, всего 235), их устранение модальной импутацией с валидацией.
   2. Обнаружение и винзоризация выбросов по правилу Тьюки (1.5×IQR) для признаков `Hours_Studied`, `Tutoring_Sessions`, `Exam_Score` (включая аномалию 101 балл).
   3. Feature Engineering: создание новых метрик `Study_to_Sleep_Ratio`, `Academic_Effort_Index`, `Score_Growth`.
   4. Кодирование категориальных признаков (Binary Mapping + One-Hot Encoding).

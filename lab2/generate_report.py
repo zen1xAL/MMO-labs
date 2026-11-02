@@ -461,9 +461,9 @@ def create_report():
         "for col in ['Teacher_Quality', 'Parental_Education_Level', 'Distance_from_Home']:\n"
         "    df_clean[col] = df_clean[col].fillna(df_clean[col].mode()[0])\n\n"
         "# 2. Винзоризация по квартильным порогам Тьюки\n"
-        "df_clean['Hours_Studied'] = df_clean['Hours_Studied'].clip(lower=4.0, upper=36.0)\n"
-        "df_clean['Tutoring_Sessions'] = df_clean['Tutoring_Sessions'].clip(lower=0.0, upper=3.5)\n"
-        "df_clean['Exam_Score'] = df_clean['Exam_Score'].clip(lower=59.0, upper=75.0)"
+        "df_clean['Hours_Studied'] = df_clean['Hours_Studied'].clip(lower=4, upper=36)\n"
+        "df_clean['Tutoring_Sessions'] = df_clean['Tutoring_Sessions'].clip(lower=0, upper=3)\n"
+        "df_clean['Exam_Score'] = df_clean['Exam_Score'].clip(lower=59, upper=75)"
     )
     add_code_block(doc, code_p2)
 
@@ -534,9 +534,9 @@ def create_report():
     doc.add_paragraph(
         "Для выявления степени линейной взаимосвязи между числовыми признаками построена тепловая карта матрицы "
         "парных коэффициентов корреляции Пирсона (Рисунок 4.9). Анализ показал устойчивую положительную корреляцию "
-        "целевого балла Exam_Score с часами самостоятельной подготовки Hours_Studied (r = 0.44), посещаемостью "
-        "Attendance (r = 0.58) и интегральным индексом усилий Academic_Effort_Index (r = 0.61), что подтверждает "
-        "высокую практическую значимость сгенерированного составного признака."
+        "целевого балла Exam_Score с интегральным индексом усилий Academic_Effort_Index (r = 0.77), посещаемостью "
+        "Attendance (r = 0.66), часами самостоятельной подготовки Hours_Studied (r = 0.50) и отношением времени "
+        "учебы ко сну Study_to_Sleep_Ratio (r = 0.40), что подтверждает высокую практическую значимость сгенерированных признаков."
     )
 
     add_figure("09_correlation_matrix_heatmap.png", "Рисунок 4.9 – Матрица парных коэффициентов корреляции Пирсона")

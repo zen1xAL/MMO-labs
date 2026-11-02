@@ -23,6 +23,7 @@ def create_archive():
         "Отчет_ЛР02_Власовец.pdf",
         "LAB02_EXPLANATION.md",
         "StudentPerformance_Preprocessed.csv",
+        "StudentPerformance_Scaled.csv",
         "eda_summary.json",
         "generate_eda_pipeline.py",
         "build_jupyter_notebook.py",
