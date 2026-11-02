@@ -1,0 +1,58 @@
+{
+  "dataset": {
+    "n_samples": 1000,
+    "n_features": 2,
+    "weights_count": 3,
+    "noise_std": 10.0,
+    "random_state": 42
+  },
+  "analytical_weights": [
+    1.7660249546414304,
+    39.47249837473203,
+    6.897047617122879
+  ],
+  "bgd_results": {
+    "w": [
+      1.7660212129496777,
+      39.47241521181763,
+      6.897035973292769
+    ],
+    "iterations": 124,
+    "converged": true,
+    "final_mse": 96.85437121990687,
+    "diff_from_analytical": 8.405741708594578e-05
+  },
+  "sgd_results": {
+    "w": [
+      2.97030831816967,
+      40.51651147994559,
+      5.835660171177114
+    ],
+    "iterations": 1500,
+    "final_mse": 100.51544929854731
+  },
+  "learning_rates_tested": [
+    0.001,
+    0.01,
+    0.05,
+    0.1,
+    0.5
+  ],
+  "l2_regularization": {
+    "variant": 7,
+    "type": "L2 Ridge",
+    "lambdas_count": 20,
+    "lambda_min": 0.001,
+    "lambda_max": 1000.0,
+    "w_at_lambda_min": [
+      1.76602495464143,
+      39.43308283415866,
+      6.890259213624271
+    ],
+    "w_at_lambda_max": [
+      1.7660249546414293,
+      0.03945085246761417,
+      0.006991956616130931
+    ]
+  }
+}
