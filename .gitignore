@@ -36,3 +36,10 @@ wheels/
 .DS_Store
 Thumbs.db
 Desktop.ini
+
+# Temporary files
+~$*.docx
+
+# Root candidate archives
+*.zip
+!lab*/*.zip

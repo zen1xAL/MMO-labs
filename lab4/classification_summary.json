@@ -1,0 +1,112 @@
+{
+  "dataset_name": "Bankloan.csv",
+  "dataset_task": "Bank Loan Defaulter Binary Classification",
+  "total_raw_rows": 1150,
+  "labeled_rows": 700,
+  "unlabeled_scoring_rows": 450,
+  "features_count": 8,
+  "feature_names": [
+    "age",
+    "ed",
+    "employ",
+    "address",
+    "income",
+    "debtinc",
+    "creddebt",
+    "othdebt"
+  ],
+  "target_name": "default",
+  "class_distribution": {
+    "class_0_non_default": 517,
+    "class_1_default": 183,
+    "class_0_percentage": 73.86,
+    "class_1_percentage": 26.14
+  },
+  "train_test_split": {
+    "train_size": 560,
+    "test_size": 140,
+    "test_percentage": 20,
+    "random_state": 42
+  },
+  "models_evaluation": {
+    "Logistic Regression": {
+      "accuracy": 0.8142857142857143,
+      "precision": 0.6571428571428571,
+      "recall": 0.6216216216216216,
+      "f1": 0.6388888888888888,
+      "roc_auc": 0.8669640514300709,
+      "confusion_matrix": [
+        [
+          91,
+          12
+        ],
+        [
+          14,
+          23
+        ]
+      ]
+    },
+    "SVM (Linear Kernel)": {
+      "accuracy": 0.8357142857142857,
+      "precision": 0.7333333333333333,
+      "recall": 0.5945945945945946,
+      "f1": 0.6567164179104478,
+      "roc_auc": 0.8698504329572292,
+      "confusion_matrix": [
+        [
+          95,
+          8
+        ],
+        [
+          15,
+          22
+        ]
+      ]
+    },
+    "SVM (RBF Kernel)": {
+      "accuracy": 0.8071428571428572,
+      "precision": 0.6923076923076923,
+      "recall": 0.4864864864864865,
+      "f1": 0.5714285714285714,
+      "roc_auc": 0.8066124376803988,
+      "confusion_matrix": [
+        [
+          95,
+          8
+        ],
+        [
+          19,
+          18
+        ]
+      ]
+    },
+    "CART (Decision Tree)": {
+      "accuracy": 0.7357142857142858,
+      "precision": 0.5,
+      "recall": 0.35135135135135137,
+      "f1": 0.4126984126984127,
+      "roc_auc": 0.7824717921805302,
+      "confusion_matrix": [
+        [
+          90,
+          13
+        ],
+        [
+          24,
+          13
+        ]
+      ]
+    }
+  },
+  "best_model": {
+    "name": "SVM (Linear Kernel)",
+    "accuracy": 0.8357142857142857,
+    "f1_score": 0.6567164179104478,
+    "roc_auc": 0.8698504329572292
+  },
+  "scoring_inference": {
+    "approved_count": 336,
+    "rejected_count": 114,
+    "threshold": 0.35
+  }
+}
